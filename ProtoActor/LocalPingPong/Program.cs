@@ -12,6 +12,7 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
+
         const int messageCount = 1000000;
         const int batchSize = 100;
         int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };

@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard1.5</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Proto.Actor" Version="0.1.1" />
+    <PackageReference Include="Proto.Mailbox" Version="0.1.1" />
+  </ItemGroup>
+
+</Project>

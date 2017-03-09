@@ -12,13 +12,12 @@ https://github.com/atemerev/skynet
 - Hardware: Windown 10, Intel Core i5 3570, 8 GB RAM
 - Software: .NET 4.6.2, NetCore CLI 1.0, NetCore SDK 1.1.
 
-|Lib	                  | LocalPingPong         | SpawnBenchmark  |
-|---                    |---                    |---              |
-|Akka.NET 1.1.3	        | 43.010.752 msg/s	    | 9.64 sec        |
-|Akka.NET 1.1.4 (beta)	|	-                     | 8.05 sec        |
-|ProtoActor C# (0.1.1)  |	61.538.461 msg/s	    | 1.29 sec        |
-|Orleans 1.4.0          | -                     | -               |
-|Akka 2.4.17            | -                     | -               |
+|Lib	                | LocalPingPong         | RemoteBenchmark    | SpawnBenchmark  |
+|---                    |---                    |---                 |---              |
+|Akka.NET 1.1.3	        | ~ 43 mil msg/s	    | 38000 msg/s        | 9.64 sec        |
+|ProtoActor C# 0.1.1    | ~ 61 mil msg/s	    | 2.4 mil msg/s      | 1.29 sec        |
+|Orleans 1.4.0          | -                     | -                  | -               |
+|Akka 2.4.17            | -                     | -                  | -               |
 
 
 ## How to run
