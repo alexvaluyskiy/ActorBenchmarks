@@ -222,3 +222,6 @@ resetdev.bat
 
 
 /.vs
+
+Akka/**/project/target/*
+Akka/**/target/*
