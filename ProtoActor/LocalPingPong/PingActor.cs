@@ -1,33 +1,34 @@
-﻿using Akka.Actor;
+﻿using System.Threading.Tasks;
+using Proto;
 
 namespace LocalPingPong
 {
-    public class Msg
+    public class PingActor : IActor
     {
-        public Msg(IActorRef sender)
+        public class Msg
         {
-            Sender = sender;
+            public Msg(PID sender)
+            {
+                Sender = sender;
+            }
+
+            public PID Sender { get; }
         }
 
-        public IActorRef Sender { get; }
-    }
-
-    public class Start
-    {
-        public Start(IActorRef sender)
+        public class Start
         {
-            Sender = sender;
+            public Start(PID sender)
+            {
+                Sender = sender;
+            }
+
+            public PID Sender { get; }
         }
 
-        public IActorRef Sender { get; }
-    }
-
-    public class PingActor : UntypedActor
-    {
         private readonly int _batchSize;
         private int _batch;
         private int _messageCount;
-        private IActorRef _replyTo;
+        private PID _replyTo;
 
         public PingActor(int messageCount, int batchSize)
         {
@@ -35,13 +36,13 @@ namespace LocalPingPong
             _batchSize = batchSize;
         }
 
-        protected override void OnReceive(object message)
+        public Task ReceiveAsync(IContext context)
         {
-            switch (message)
+            switch (context.Message)
             {
                 case Start s:
-                    SendBatch(Context, s.Sender);
-                    _replyTo = Sender;
+                    SendBatch(context, s.Sender);
+                    _replyTo = context.Sender;
                     break;
                 case Msg m:
                     _batch--;
@@ -51,15 +52,16 @@ namespace LocalPingPong
                         break;
                     }
 
-                    if (!SendBatch(Context, m.Sender))
+                    if (!SendBatch(context, m.Sender))
                     {
                         _replyTo.Tell(true);
                     }
                     break;
             }
+            return Actor.Done;
         }
 
-        private bool SendBatch(IActorContext context, IActorRef sender)
+        private bool SendBatch(IContext context, PID sender)
         {
             if (_messageCount == 0)
             {
@@ -78,9 +80,6 @@ namespace LocalPingPong
             return true;
         }
 
-        public static Props Props( int messageCount, int batchSize)
-        {
-            return Akka.Actor.Props.Create(() => new PingActor(messageCount, batchSize));
-        }
+        public static Props Props(int messageCount, int batchSize) => Actor.FromProducer(() => new PingActor(messageCount, batchSize));
     }
 }

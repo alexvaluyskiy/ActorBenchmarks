@@ -27,32 +27,27 @@ namespace LocalPingPong
             {
                 var clients = new IActorRef[clientCount];
                 var echos = new IActorRef[clientCount];
-                var completions = new TaskCompletionSource<bool>[clientCount];
 
                 using (var sys = ActorSystem.Create("main", config))
                 {
                     for (var i = 0; i < clientCount; i++)
                     {
-                        var tsc = new TaskCompletionSource<bool>();
-                        completions[i] = tsc;
-                        var clientProps = PingActor.Props(tsc, messageCount, batchSize);
-
-                        clients[i] = sys.ActorOf(clientProps);
+                        clients[i] = sys.ActorOf(PingActor.Props(messageCount, batchSize));
                         echos[i] = sys.ActorOf(PongActor.Props);
                     }
 
-                    var tasks = completions.Select(tsc => tsc.Task).ToArray();
+                    var tasks = new Task[clientCount];
                     var sw = Stopwatch.StartNew();
                     for (var i = 0; i < clientCount; i++)
                     {
                         var client = clients[i];
                         var echo = echos[i];
 
-                        client.Tell(new Start(echo));
+                        tasks[i] = client.Ask<bool>(new Start(echo));
                     }
                     Task.WaitAll(tasks);
-
                     sw.Stop();
+
                     var totalMessages = messageCount * 2 * clientCount;
                     var x = (int)(totalMessages / (double)sw.ElapsedMilliseconds * 1000.0d);
                     Console.WriteLine($"{clientCount}\t\t{sw.ElapsedMilliseconds}\t\t{x}");

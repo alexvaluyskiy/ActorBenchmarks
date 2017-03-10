@@ -5,146 +5,52 @@ using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using Proto;
-using Proto.Mailbox;
 
-class Program
+namespace LocalPingPong
 {
-    static void Main(string[] args)
+    class Program
     {
-        Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
-
-        const int messageCount = 1000000;
-        const int batchSize = 100;
-        int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };
-
-        Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
-
-        foreach (var clientCount in clientCounts)
+        static void Main(string[] args)
         {
-            var clients = new PID[clientCount];
-            var echos = new PID[clientCount];
-            var completions = new TaskCompletionSource<bool>[clientCount];
+            Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
 
+            const int messageCount = 1000000;
+            const int batchSize = 100;
+            int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };
 
-            var echoProps = Actor.FromFunc(ctx =>
+            Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
+
+            foreach (var clientCount in clientCounts)
             {
-                switch (ctx.Message)
+                var clients = new PID[clientCount];
+                var echos = new PID[clientCount];
+
+                for (var i = 0; i < clientCount; i++)
                 {
-                    case Msg msg:
-                        msg.Sender.Tell(msg);
-                        break;
+                    clients[i] = Actor.Spawn(PingActor.Props(messageCount, batchSize));
+                    echos[i] = Actor.Spawn(PongActor.Props);
                 }
-                return Actor.Done;
-            });
 
-            for (var i = 0; i < clientCount; i++)
-            {
-                var tsc = new TaskCompletionSource<bool>();
-                completions[i] = tsc;
-                var clientProps = Actor.FromProducer(() => new PingActor(tsc, messageCount, batchSize));
+                var tasks = new Task[clientCount];
+                var sw = Stopwatch.StartNew();
+                for (var i = 0; i < clientCount; i++)
+                {
+                    var client = clients[i];
+                    var echo = echos[i];
 
-                clients[i] = Actor.Spawn(clientProps);
-                echos[i] = Actor.Spawn(echoProps);
-            }
-            var tasks = completions.Select(tsc => tsc.Task).ToArray();
-            var sw = Stopwatch.StartNew();
-            for (var i = 0; i < clientCount; i++)
-            {
-                var client = clients[i];
-                var echo = echos[i];
+                    tasks[i] = client.RequestAsync<bool>(new PingActor.Start(echo));
+                }
+                Task.WaitAll(tasks);
+                sw.Stop();
 
-                client.Tell(new Start(echo));
-            }
-            Task.WaitAll(tasks);
+                var totalMessages = messageCount * 2 * clientCount;
+                var x = (int)(totalMessages / (double)sw.ElapsedMilliseconds * 1000.0d);
+                Console.WriteLine($"{clientCount}\t\t{sw.ElapsedMilliseconds}\t\t{x}");
 
-            sw.Stop();
-            var totalMessages = messageCount * 2 * clientCount;
-
-            var x = (int) (totalMessages / (double) sw.ElapsedMilliseconds * 1000.0d);
-            Console.WriteLine($"{clientCount}\t\t{sw.ElapsedMilliseconds}\t\t{x}");
-
-            Thread.Sleep(2000);
-        }
-
-        Console.ReadLine();
-    }
-
-    public class Msg
-    {
-        public Msg(PID sender)
-        {
-            Sender = sender;
-        }
-
-        public PID Sender { get; }
-    }
-
-    public class Start
-    {
-        public Start(PID sender)
-        {
-            Sender = sender;
-        }
-
-        public PID Sender { get; }
-    }
-
-
-    public class PingActor : IActor
-    {
-        private readonly int _batchSize;
-        private readonly TaskCompletionSource<bool> _wgStop;
-        private int _batch;
-        private int _messageCount;
-
-        public PingActor(TaskCompletionSource<bool> wgStop, int messageCount, int batchSize)
-        {
-            _wgStop = wgStop;
-            _messageCount = messageCount;
-            _batchSize = batchSize;
-        }
-
-        public Task ReceiveAsync(IContext context)
-        {
-            switch (context.Message)
-            {
-                case Start s:
-                    SendBatch(context, s.Sender);
-                    break;
-                case Msg m:
-                    _batch--;
-
-                    if (_batch > 0)
-                    {
-                        break;
-                    }
-
-                    if (!SendBatch(context, m.Sender))
-                    {
-                        _wgStop.SetResult(true);
-                    }
-                    break;
-            }
-            return Actor.Done;
-        }
-
-        private bool SendBatch(IContext context, PID sender)
-        {
-            if (_messageCount == 0)
-            {
-                return false;
+                Thread.Sleep(2000);
             }
 
-            var m = new Msg(context.Self);
-            
-            for (var i = 0; i < _batchSize; i++)
-            {
-                sender.Tell(m);
-            }
-
-            _messageCount -= _batchSize;
-            _batch = _batchSize;
-            return true;
+            Console.ReadLine();
         }
     }
 }
