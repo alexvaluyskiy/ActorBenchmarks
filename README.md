@@ -11,17 +11,42 @@ https://github.com/atemerev/skynet
 ## Results
 - Hardware: Windown 10, Intel Core i5 3570, 8 GB RAM
 - Software: .NET 4.6.2, NetCore CLI 1.0, NetCore SDK 1.1.
+- Frameworks: Akka.NET 1.1.3, Orleans 1.4.0, ProtoActor 0.1.1, Akka 2.4.17
 
-|Lib	                | LocalPingPong         | RemoteBenchmark    | SpawnBenchmark  |
-|---                    |---                    |---                 |---              |
-|Akka.NET 1.1.3	        | ~ 43 mil msg/s	    | 38000 msg/s        | 9.64 sec        |
-|ProtoActor C# 0.1.1    | ~ 61 mil msg/s	    | 2.4 mil msg/s      | 1.29 sec        |
-|Orleans 1.4.0          | -                     | -                  | -               |
-|Akka 2.4.17            | -                     | -                  | 6.39 sec        |
+### SpawnBenchmark
+|Library	                  | Platform            | Result             |
+|---                          |---                  |---                 |
+|ProtoActor (No Children)	  | .NET	            | 1.29 sec           |
+|ProtoActor                   | .NET	            | 3.08 sec           |
+|Akka                         | Scala               | 6.39 sec           |
+|Akka.NET                     | .NET                | 9.64 sec           |
+|Orleans                      | .NET                | -                  |
+|ProtoActor                   | Go                  | -                  |
+|Erlang                       | Erlang              | -                  |
+
+### LocalPingPong
+|Library	                  | Platform            | Result             |
+|---                          |---                  |---                 |
+|ProtoActor                   | .NET	            | ~ 61 mil msg/s     |
+|Akka.NET                     | .NET                | ~ 43 mil msg/s     |
+|Akka                         | Scala               | -                  |
+|Orleans                      | .NET                | -                  |
+|ProtoActor                   | Go                  | -                  |
+|Erlang                       | Erlang              | -                  |
+
+### RemoteBenchmark
+|Library	                  | Platform            | Result             |
+|---                          |---                  |---                 |
+|ProtoActor                   | .NET	            | 2.4 mil msg/s      |
+|Akka.NET                     | .NET                | 38000 msg/s        |
+|Akka                         | Scala               | -                  |
+|Orleans                      | .NET                | -                  |
+|ProtoActor                   | Go                  | -                  |
+|Erlang                       | Erlang              | -                  |
 
 
 ## How to run
-### C# examples
+### Run C# benchmarks
 1. Install .NET Core SDK 1.1.1
 2. Go to the benchmack folder
 3. Run `dotnet restore` and `dotnet build -c Release`
@@ -30,4 +55,5 @@ https://github.com/atemerev/skynet
 For `ProtoActor` you also could run a NetCore version of benchmark, just type `dotnet run -c Release`
 
 ### Scala examples
-1. TBD
+1. Install Sbt 0.13.13
+2. Run `sbt compile run`

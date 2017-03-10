@@ -1,24 +1,17 @@
-﻿using Proto;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Runtime;
-using System.Threading.Tasks;
+using Proto;
 
 namespace SpawnBenchmark
 {
-    internal class Program
+    class Program
     {
-        private static void Main()
+        static void Main(string[] args)
         {
             Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
 
-            var pid = Actor.Spawn(SpawnActor.Props);
-            var sw = Stopwatch.StartNew();
-            var t = pid.RequestAsync<long>(new SpawnRequest(div: 10, num: 0, size: 1000000));
-            t.ConfigureAwait(false);
-            var res = t.Result;
-            Console.WriteLine(sw.Elapsed);
-            Console.WriteLine(res);
+            var actor = Actor.Spawn(RootActor.Props);
+            actor.Tell(new RootActor.Run(5));
             Console.ReadLine();
         }
     }

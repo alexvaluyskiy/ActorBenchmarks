@@ -1,52 +1,59 @@
-﻿using Proto;
-using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using Proto;
 
 namespace SpawnBenchmark
 {
-    internal class SpawnActor : IActor
+    public sealed class SpawnActor : IActor
     {
-        private long Replies;
-        private PID ReplyTo;
-        private long Sum;
+        public class Start
+        {
+            public Start(int level, long number)
+            {
+                Level = level;
+                Number = number;
+            }
+
+            public int Level { get; }
+
+            public long Number { get; }
+        }
+
+        private int _todo = 10;
+        private long _count = 0L;
 
         public Task ReceiveAsync(IContext context)
         {
-            var msg = context.Message;
-            var r = msg as SpawnRequest;
-            if (r != null)
+            if (context.Message is Start start)
             {
-                if (r.Size == 1)
+                if (start.Level == 1)
                 {
-                    context.Respond(r.Num);
+                    context.Parent.Tell(start.Number);
                     context.Self.Stop();
-                    return Actor.Done;
                 }
-                Replies = r.Div;
-                ReplyTo = context.Sender;
-                for (var i = 0; i < r.Div; i++)
+                else
                 {
-                    var child = Actor.Spawn(Props);
-                    child.Request(new SpawnRequest
-                    (
-                        num: r.Num + i * (r.Size / r.Div),
-                        size: r.Size / r.Div,
-                        div: r.Div
-                    ), context.Self);
+                    var startNumber = start.Number * 10;
+
+                    for (int i = 0; i <= 9; i++)
+                    {
+                        context.Spawn(Props).Tell(new Start(start.Level - 1, startNumber + i));
+                    }
+                }
+                return Actor.Done;
+            }
+            else if (context.Message is long l)
+            {
+                _todo -= 1;
+                _count += l;
+                if (_todo == 0)
+                {
+                    context.Parent.Tell(_count);
+                    //context.Self.Stop();
                 }
 
                 return Actor.Done;
             }
-            if (msg is Int64)
-            {
-                Sum += (Int64)msg;
-                Replies--;
-                if (Replies == 0)
-                {
-                    ReplyTo.Tell(Sum);
-                }
-                return Actor.Done;
-            }
+
             return Actor.Done;
         }
 

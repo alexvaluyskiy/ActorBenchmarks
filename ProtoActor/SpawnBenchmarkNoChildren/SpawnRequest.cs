@@ -1,6 +1,6 @@
-﻿namespace SpawnBenchmark
+﻿namespace SpawnBenchmarkNoChildren
 {
-    internal class SpawnRequest
+    public class SpawnRequest
     {
         public SpawnRequest(long div, long num, long size)
         {

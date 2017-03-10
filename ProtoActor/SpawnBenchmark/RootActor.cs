@@ -36,7 +36,7 @@ namespace SpawnBenchmark
             Console.WriteLine($"Start run {n}");
 
             var start = Stopwatch.ElapsedMilliseconds;
-            Actor.Spawn(SpawnActor.Props).Request(new SpawnActor.Start(7, 0), context.Self);
+            context.Spawn(SpawnActor.Props).Tell(new SpawnActor.Start(7, 0));
             context.SetBehavior(Waiting(n - 1, start));
         }
 

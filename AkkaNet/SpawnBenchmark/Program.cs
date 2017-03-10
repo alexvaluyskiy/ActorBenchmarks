@@ -1,7 +1,6 @@
 ﻿using Akka.Actor;
 using Akka.Configuration;
 using System;
-using System.Diagnostics;
 using System.Runtime;
 
 namespace SpawnBenchmark
