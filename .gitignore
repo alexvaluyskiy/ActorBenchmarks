@@ -225,3 +225,4 @@ resetdev.bat
 
 Akka/**/project/target/*
 Akka/**/target/*
+.idea

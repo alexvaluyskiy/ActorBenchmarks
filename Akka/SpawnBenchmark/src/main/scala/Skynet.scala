@@ -38,6 +38,8 @@ class Root extends Actor {
   }
 
   def startRun(n: Int): Unit = {
+    println(s"Start run: $n")
+
     val start = System.nanoTime()
     context.actorOf(Skynet.props) ! Skynet.Start(7, 0)
     context.become(waiting(n - 1, start))
@@ -46,7 +48,7 @@ class Root extends Actor {
   def waiting(n: Int, start: Long): Receive = {
     case x: Long =>
       val diffMs = (System.nanoTime() - start) / 1000000
-      println(s"Result: $x in $diffMs ms.")
+      println(s"Run ${n+1} result: $x in $diffMs ms.")
       if (n == 0) context.system.terminate()
       else startRun(n)
   }
@@ -55,5 +57,5 @@ class Root extends Actor {
 object Root extends App {
   case class Run(num: Int)
 
-  ActorSystem("main").actorOf(Props[Root]) ! Run(3)
+  ActorSystem("main").actorOf(Props[Root]) ! Run(5)
 }

@@ -16,7 +16,7 @@ https://github.com/atemerev/skynet
 |---                    |---                    |---                 |---              |
 |Akka.NET 1.1.3	        | ~ 43 mil msg/s	    | 38000 msg/s        | 9.64 sec        |
 |ProtoActor C# 0.1.1    | ~ 61 mil msg/s	    | 2.4 mil msg/s      | 1.29 sec        |
-|Orleans 1.4.0          | -                     | -                  | 6.39 sec        |
+|Orleans 1.4.0          | -                     | -                  | -               |
 |Akka 2.4.17            | -                     | -                  | 6.39 sec        |
 
 

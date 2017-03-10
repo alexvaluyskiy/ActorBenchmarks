@@ -2,47 +2,55 @@
 
 namespace SpawnBenchmark
 {
-    internal class SkynetFast : UntypedActor
+    public sealed class SpawnActor : UntypedActor
     {
-        private long replies;
-        private IActorRef replyTo;
-        private long sum = 0;
+        public class Start
+        {
+            public Start(int level, long number)
+            {
+                Level = level;
+                Number = number;
+            }
+
+            public int Level { get; }
+
+            public long Number { get; }
+        }
+
+        private int _todo = 10;
+        private long _count = 0L;
 
         protected override void OnReceive(object message)
         {
-            if (message is long l)
+            if (message is Start start)
             {
-                sum += l;
-                replies--;
-                if (replies == 0)
+                if (start.Level == 1)
                 {
-                    replyTo.Tell(sum);
+                    Context.Parent.Tell(start.Number);
+                    Context.Stop(Self);
+                }
+                else
+                {
+                    var startNumber = start.Number * 10;
+
+                    for (int i = 0; i <= 9; i++)
+                    {
+                        Context.ActorOf(Props).Tell(new Start(start.Level - 1, startNumber + i));
+                    }
                 }
             }
-            if (message is SpawnRequest msg)
+            else if (message is long l)
             {
-                if (msg.Size == 1)
+                _todo -= 1;
+                _count += l;
+                if (_todo == 0)
                 {
-                    Sender.Tell(msg.Num);
-                    Context.Stop(Context.Self);
-                    return;
-                }
-
-                replyTo = Sender;
-                replies = msg.Div;
-                for (var i = 0; i < msg.Div; i++)
-                {
-                    var child = Context.ActorOf(Props);
-                    child.Tell(new SpawnRequest
-                    (
-                        num: msg.Num + i * (msg.Size / msg.Div),
-                        size: msg.Size / msg.Div,
-                        div: msg.Div
-                    ), Self);
+                    Context.Parent.Tell(_count);
+                    Context.Stop(Self);
                 }
             }
         }
 
-        public static Props Props { get; } = Props.Create<SkynetFast>();
+        public static Props Props { get; } = Props.Create<SpawnActor>();
     }
 }

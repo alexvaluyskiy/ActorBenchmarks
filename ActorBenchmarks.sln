@@ -43,6 +43,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "ProtoActor\Remo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "AkkaNet\RemoteBenchmark\Messages\Messages.csproj", "{043D2B2B-50A5-4B7A-BCFA-36F246884F08}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpawnBenchmark2", "ProtoActor\SpawnBenchmark2\SpawnBenchmark2.csproj", "{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -97,6 +99,10 @@ Global
 		{043D2B2B-50A5-4B7A-BCFA-36F246884F08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{043D2B2B-50A5-4B7A-BCFA-36F246884F08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{043D2B2B-50A5-4B7A-BCFA-36F246884F08}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,5 +122,6 @@ Global
 		{99C51E0F-1FE0-44ED-B769-B6FD8047ADE3} = {E876D5C1-E807-4A45-BDEE-C8257770D3DB}
 		{455D57A3-7D66-456E-920B-58A77C8813F7} = {E876D5C1-E807-4A45-BDEE-C8257770D3DB}
 		{043D2B2B-50A5-4B7A-BCFA-36F246884F08} = {728EFD6B-4F1D-4E9B-9CFF-E8D3EB8A3877}
+		{DA012520-3AB2-4B8D-93A3-535E6F3C6AD2} = {729F12BD-3EA1-4C34-83E9-49B3F68974DD}
 	EndGlobalSection
 EndGlobal
