@@ -20,9 +20,9 @@ https://github.com/atemerev/skynet
 |ProtoActor                   | .NET	            | 3.08 sec           |
 |Akka                         | Scala               | 6.39 sec           |
 |Akka.NET                     | .NET                | 9.64 sec           |
-|Orleans                      | .NET                | -                  |
 |ProtoActor                   | Go                  | -                  |
 |Erlang                       | Erlang              | -                  |
+|Orleans                      | .NET                | FAILED             |
 
 ### LocalPingPong
 |Library	                  | Platform            | Result             |

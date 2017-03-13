@@ -5,4 +5,17 @@
     <TargetFramework>net462</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Include="App.config" />
+    <Content Include="OrleansConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Orleans.Client" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="1.4.0" />
+  </ItemGroup>
 </Project>
