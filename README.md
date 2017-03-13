@@ -29,6 +29,7 @@ https://github.com/atemerev/skynet
 |---                          |---                  |---                 |
 |ProtoActor                   | .NET	            | ~ 61 mil msg/s     |
 |Akka.NET                     | .NET                | ~ 43 mil msg/s     |
+|Akka.NET (serialization)     | .NET                | ~ 174000 msg/s     |
 |Akka                         | Scala               | -                  |
 |Orleans                      | .NET                | -                  |
 |ProtoActor                   | Go                  | -                  |
