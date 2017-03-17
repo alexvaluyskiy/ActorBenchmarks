@@ -10,41 +10,39 @@ https://github.com/atemerev/skynet
 
 ## Results
 - Hardware: Windown 10, Intel Core i5 3570, 8 GB RAM
-- Software: .NET 4.6.2, NetCore CLI 1.0, NetCore SDK 1.1.
-- Frameworks: Akka.NET 1.1.3, Orleans 1.4.0, ProtoActor 0.1.1, Akka 2.4.17
+- Software: .NET 4.6.2, Go 1.8, Scala 2.12
+- Frameworks: Akka.NET 1.1.3, Orleans 1.4.0, ProtoActor 0.1.2, Akka 2.4.17
 
 ### SpawnBenchmark
 |Library	                  | Platform            | Result             |
 |---                          |---                  |---                 |
 |ProtoActor (No Children)	  | .NET	            | 1.29 sec           |
-|ProtoActor                   | .NET	            | 3.08 sec           |
+|ProtoActor (No Children)     | Go                  | 2.24 sec           |
+|ProtoActor                   | .NET	            | 2.71 sec           |
 |Akka                         | Scala               | 6.39 sec           |
 |Akka.NET                     | .NET                | 9.64 sec           |
 |ProtoActor                   | Go                  | -                  |
-|Erlang                       | Erlang              | -                  |
 |Orleans                      | .NET                | FAILED             |
 
 ### LocalPingPong (8 actors on both sides)
 |Library	                  | Platform            | Result             |
 |---                          |---                  |---                 |
-|ProtoActor                   | .NET	            | ~ 61 mil msg/s     |
+|ProtoActor                   | Go                  | ~ 77 mil msg/s     |
+|ProtoActor                   | .NET	            | ~ 64 mil msg/s     |
 |Akka.NET                     | .NET                | ~ 43 mil msg/s     |
 |Akka.NET (serialization)     | .NET                | ~ 174000 msg/s     |
 |Orleans                      | .NET                | ~ 170000 msg/s     |
 |Akka                         | Scala               | -                  |
-|ProtoActor                   | Go                  | -                  |
-|Erlang                       | Erlang              | -                  |
 
 ### RemoteBenchmark (1 actor on both sides)
 |Library	                  | Platform            | Result             |
 |---                          |---                  |---                 |
+|ProtoActor                   | Go                  | 2.6 mil msg/s      |
 |ProtoActor                   | .NET	            | 2.4 mil msg/s      |
 |Akka.NET                     | .NET                | 38000 msg/s        |
 |Akka                         | Scala               | -                  |
+|Akka (Artery)                | Scala               | -                  |
 |Orleans                      | .NET                | -                  |
-|ProtoActor                   | Go                  | -                  |
-|Erlang                       | Erlang              | -                  |
-
 
 ## How to run
 ### Run C# benchmarks
