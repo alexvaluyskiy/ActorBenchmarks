@@ -6,5 +6,6 @@
   <Defaults>
     <Networking Address="localhost" Port="11111" />
     <ProxyingGateway Address="localhost" Port="30000" />
+    <Tracing DefaultTraceLevel="Error" TraceToConsole="false" TraceToFile="false"/>
   </Defaults>
 </OrleansConfiguration>

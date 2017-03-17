@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace LocalPingPong
 {
-    public interface IPongGrain : IGrainWithGuidKey
+    public interface IPongGrain : IGrainWithIntegerKey
     {
-        Task Ping(IPingGrain from, Message message);
+        Task Ping(IPingGrain pingGrain, Message message);
     }
 
     public class PongGrain : Grain, IPongGrain
     {
-        public Task Ping(IPingGrain @from, Message message)
+        public Task Ping(IPingGrain pingGrain, Message message)
         {
-            from.Pong(this, message).Ignore();
+            pingGrain.Pong(this, message).Ignore();
             return TaskDone.Done;
         }
     }

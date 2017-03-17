@@ -24,18 +24,18 @@ https://github.com/atemerev/skynet
 |Erlang                       | Erlang              | -                  |
 |Orleans                      | .NET                | FAILED             |
 
-### LocalPingPong
+### LocalPingPong (8 actors on both sides)
 |Library	                  | Platform            | Result             |
 |---                          |---                  |---                 |
 |ProtoActor                   | .NET	            | ~ 61 mil msg/s     |
 |Akka.NET                     | .NET                | ~ 43 mil msg/s     |
 |Akka.NET (serialization)     | .NET                | ~ 174000 msg/s     |
+|Orleans                      | .NET                | ~ 170000 msg/s     |
 |Akka                         | Scala               | -                  |
-|Orleans                      | .NET                | -                  |
 |ProtoActor                   | Go                  | -                  |
 |Erlang                       | Erlang              | -                  |
 
-### RemoteBenchmark
+### RemoteBenchmark (1 actor on both sides)
 |Library	                  | Platform            | Result             |
 |---                          |---                  |---                 |
 |ProtoActor                   | .NET	            | 2.4 mil msg/s      |

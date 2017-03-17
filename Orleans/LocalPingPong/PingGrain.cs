@@ -1,70 +1,87 @@
 ﻿using Orleans;
 using System.Threading.Tasks;
+using System;
+using System.Diagnostics;
 
 namespace LocalPingPong
 {
-    public interface IPingGrain : IGrainWithGuidKey
+    public interface IPingGrain : IGrainWithIntegerKey
     {
-        Task Run();
-        Task Pong(IPongGrain from, Message message);
-        Task Initialize(IPongGrain actor, long repeats);
-        Task Subscribe(IClientObserver subscriber);
+        
+        Task Init(IPongGrain pongGrain, int messageCount, int batchSize);
+
+        Task Start();
+
+        Task Pong(IPongGrain pongGrain, Message message);
+
+        Task Subscribe(IBenchmarkObserver observer);
     }
 
     public class PingGrain : Grain, IPingGrain
     {
-        static readonly Message msg = new Message();
+        private int _messageCount;
+        private int _batchSize;
+        private int _batch;
+        private IPongGrain _pongGrain;
+        private ObserverSubscriptionManager<IBenchmarkObserver> subscribers = new ObserverSubscriptionManager<IBenchmarkObserver>();
 
-        IPongGrain actor;
-        ObserverSubscriptionManager<IClientObserver> subscribers;
-
-        long pings;
-        long pongs;
-        long repeats;
-
-        public override Task OnActivateAsync()
+        public Task Init(IPongGrain pongGrain, int messageCount, int batchSize)
         {
-            subscribers = new ObserverSubscriptionManager<IClientObserver>();
-            return TaskDone.Done;
-        }
-
-        public Task Initialize(IPongGrain actor, long repeats)
-        {
-            this.actor = actor;
-            this.repeats = repeats;
+            _messageCount = messageCount;
+            _batchSize = batchSize;
+            _pongGrain = pongGrain;
 
             return TaskDone.Done;
         }
 
-        public Task Run()
+        public Task Start()
         {
-            actor.Ping(this, msg).Ignore();
-            pings++;
+            SendBatch(_pongGrain);
 
             return TaskDone.Done;
         }
 
-        public Task Pong(IPongGrain @from, Message message)
+        public Task Pong(IPongGrain pongGrain, Message message)
         {
-            pongs++;
+            _batch--;
 
-            if (pings < repeats)
+            if (_batch > 0)
             {
-                actor.Ping(this, msg);
-                pings++;
+                return TaskDone.Done;
             }
-            else if (pongs >= repeats)
+
+            if (!SendBatch(pongGrain))
             {
-                subscribers.Notify(x => x.Done(pings, pongs));
+                subscribers.Notify(s => s.BenchmarkFinished());
             }
 
             return TaskDone.Done;
         }
 
-        public Task Subscribe(IClientObserver subscriber)
+        public Task Subscribe(IBenchmarkObserver observer)
         {
-            subscribers.Subscribe(subscriber);
+            subscribers.Subscribe(observer);
+
             return TaskDone.Done;
+        }
+
+        private bool SendBatch(IPongGrain pongGrain)
+        {
+            if (_messageCount == 0)
+            {
+                return false;
+            }
+
+            var message = new Message();
+
+            for (var i = 0; i < _batchSize; i++)
+            {
+                pongGrain.Ping(this, message);
+            }
+
+            _messageCount -= _batchSize;
+            _batch = _batchSize;
+            return true;
         }
     }
 }
