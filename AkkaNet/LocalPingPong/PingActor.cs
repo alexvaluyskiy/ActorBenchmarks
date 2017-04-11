@@ -1,15 +1,19 @@
 ﻿using Akka.Actor;
+using MessagePack;
 
 namespace LocalPingPong
 {
-    public class Msg
+    [MessagePackObject]
+    public sealed class Msg
     {
-        public Msg(IActorRef sender)
+        [SerializationConstructor]
+        public Msg(string message)
         {
-            Sender = sender;
+            Message = message;
         }
 
-        public IActorRef Sender { get; }
+        [Key(0)]
+        public string Message { get; }
     }
 
     public class Start
@@ -28,6 +32,7 @@ namespace LocalPingPong
         private int _batch;
         private int _messageCount;
         private IActorRef _replyTo;
+        private IActorRef _pongActor;
 
         public PingActor(int messageCount, int batchSize)
         {
@@ -42,6 +47,7 @@ namespace LocalPingPong
                 case Start s:
                     SendBatch(Context, s.Sender);
                     _replyTo = Sender;
+                    _pongActor = s.Sender;
                     break;
                 case Msg m:
                     _batch--;
@@ -51,7 +57,7 @@ namespace LocalPingPong
                         break;
                     }
 
-                    if (!SendBatch(Context, m.Sender))
+                    if (!SendBatch(Context, _pongActor))
                     {
                         _replyTo.Tell(true);
                     }
@@ -66,7 +72,7 @@ namespace LocalPingPong
                 return false;
             }
 
-            var m = new Msg(context.Self);
+            var m = new Msg("ping");
 
             for (var i = 0; i < _batchSize; i++)
             {
@@ -78,7 +84,7 @@ namespace LocalPingPong
             return true;
         }
 
-        public static Props Props( int messageCount, int batchSize)
+        public static Props Props(int messageCount, int batchSize)
         {
             return Akka.Actor.Props.Create(() => new PingActor(messageCount, batchSize));
         }

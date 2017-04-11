@@ -1,0 +1,7 @@
+syntax = "proto3";
+package LocalPingPong.Protobuf.Msg;
+option optimize_for = SPEED;
+
+message RemoteMessage {
+  string message = 1;
+}

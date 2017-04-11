@@ -15,13 +15,38 @@ namespace LocalPingPong
         {
             Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
 
+            string serializer = args.FirstOrDefault(arg => arg.StartsWith("--serializer="))?.Replace("--serializer=", "");
+
             const int messageCount = 1000000;
             const int batchSize = 100;
             int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };
 
             Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
 
-            var config = ConfigurationFactory.ParseString("akka.suppress-json-serializer-warning=on");
+            var config = ConfigurationFactory.ParseString(@"akka.suppress-json-serializer-warning=on");
+
+            if (!string.IsNullOrEmpty(serializer))
+            {
+                Console.WriteLine($"Used {serializer} serializer");
+                config = config.WithFallback(ConfigurationFactory.ParseString(@"
+                    akka.actor.serialize-messages = on
+                    akka.actor.serializers.protobuf = ""LocalPingPong.ProtobufSerializer, LocalPingPong""
+                    akka.actor.serializers.msgpack = ""LocalPingPong.MsgPackSerializer, LocalPingPong""
+                    akka.actor.serializers.hyperion = ""Akka.Serialization.HyperionSerializer, Akka.Serialization.Hyperion""
+                "));
+
+                if (serializer.Equals("protobuf")) {
+                    config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = protobuf"));
+                }
+
+                if (serializer.Equals("hyperion")) {
+                    config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = hyperion"));
+                }
+
+                if (serializer.Equals("msgpack")) {
+                    config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = msgpack"));
+                }
+            }
 
             foreach (var clientCount in clientCounts)
             {
