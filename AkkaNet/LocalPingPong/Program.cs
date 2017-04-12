@@ -1,6 +1,7 @@
 ﻿using Akka.Actor;
 using Akka.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime;
@@ -30,20 +31,18 @@ namespace LocalPingPong
                 Console.WriteLine($"Used {serializer} serializer");
                 config = config.WithFallback(ConfigurationFactory.ParseString(@"
                     akka.actor.serialize-messages = on
-                    akka.actor.serializers.protobuf = ""LocalPingPong.ProtobufSerializer, LocalPingPong""
-                    akka.actor.serializers.msgpack = ""LocalPingPong.MsgPackSerializer, LocalPingPong""
-                    akka.actor.serializers.hyperion = ""Akka.Serialization.HyperionSerializer, Akka.Serialization.Hyperion""
+                    akka.actor.serializers.protobuf = ""LocalPingPong.Serializers.ProtobufSerializer, LocalPingPong""
+                    akka.actor.serializers.msgpack = ""LocalPingPong.Serializers.MsgPackSerializer, LocalPingPong""
+                    akka.actor.serializers.hyperion = ""LocalPingPong.Serializers.HyperionSerializer, LocalPingPong""
                 "));
 
                 if (serializer.Equals("protobuf")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = protobuf"));
                 }
-
-                if (serializer.Equals("hyperion")) {
+                else if (serializer.Equals("hyperion")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = hyperion"));
                 }
-
-                if (serializer.Equals("msgpack")) {
+                else if (serializer.Equals("msgpack")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = msgpack"));
                 }
             }

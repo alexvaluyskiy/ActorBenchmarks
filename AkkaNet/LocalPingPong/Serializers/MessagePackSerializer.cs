@@ -1,11 +1,9 @@
 using System;
-using System.Runtime.Remoting.Messaging;
 using Akka.Actor;
 using Akka.Serialization;
 using MessagePack;
-using MessagePack.Resolvers;
 
-namespace LocalPingPong
+namespace LocalPingPong.Serializers
 {
     public class MsgPackSerializer : Serializer
     {

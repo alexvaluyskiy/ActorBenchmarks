@@ -1,18 +1,9 @@
-//-----------------------------------------------------------------------
-// <copyright file="ClusterClientMessageSerializer.cs" company="Akka.NET Project">
-//     Copyright (C) 2009-2016 Lightbend Inc. <http://www.lightbend.com>
-//     Copyright (C) 2013-2016 Akka.NET project <https://github.com/akkadotnet/akka.net>
-// </copyright>
-//-----------------------------------------------------------------------
-
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
 using Akka.Actor;
 using Akka.Serialization;
 using Google.Protobuf;
 
-namespace LocalPingPong
+namespace LocalPingPong.Serializers
 {
     public class ProtobufSerializer : Serializer
     {
@@ -22,36 +13,36 @@ namespace LocalPingPong
 
         public override int Identifier { get; } = 50;
 
-        public override bool IncludeManifest => true;
+        public override bool IncludeManifest => false;
 
         public override byte[] ToBinary(object obj)
         {
-            if (obj is LocalPingPong.Msg)
-                return RemoteMessageBuilder((LocalPingPong.Msg)obj).ToByteArray();
+            if (obj is Msg)
+                return RemoteMessageBuilder((Msg)obj);
 
             throw new ArgumentException($"Can't serialize object of type {obj.GetType()}");
         }
 
         public override object FromBinary(byte[] bytes, Type type)
         {
-            if (type == typeof(LocalPingPong.Msg))
+            if (type == typeof(Msg))
             {
-                return RemoteMessageFrom(LocalPingPong.Protobuf.Msg.RemoteMessage.Parser.ParseFrom(bytes));
+                return RemoteMessageFrom(bytes);
             }
 
             throw new ArgumentException(typeof(ProtobufSerializer) + " cannot deserialize object of type " + type);
         }
 
-        private static LocalPingPong.Protobuf.Msg.RemoteMessage RemoteMessageBuilder(LocalPingPong.Msg remoteMessage)
+        private static byte[] RemoteMessageBuilder(Msg remoteMessage)
         {
-            var protoMessage = new LocalPingPong.Protobuf.Msg.RemoteMessage();
-            protoMessage.Message = remoteMessage.Message;
-            return protoMessage;
+            var protoMessage = new Protobuf.Msg.RemoteMessage {Message = remoteMessage.Message};
+            return protoMessage.ToByteArray();
         }
 
-        private static LocalPingPong.Msg RemoteMessageFrom(LocalPingPong.Protobuf.Msg.RemoteMessage protoMessage)
+        private static Msg RemoteMessageFrom(byte[] bytes)
         {
-            return new LocalPingPong.Msg(protoMessage.Message);
+            var protoMessage = Protobuf.Msg.RemoteMessage.Parser.ParseFrom(bytes);
+            return new Msg(protoMessage.Message);
         }
     }
 }
