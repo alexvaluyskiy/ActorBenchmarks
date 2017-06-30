@@ -20,7 +20,7 @@ namespace LocalPingPong
 
             const int messageCount = 1000000;
             const int batchSize = 100;
-            int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };
+            var clientCounts = new HashSet<int>() {1, 2, 4, Environment.ProcessorCount};
 
             Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
 
@@ -34,6 +34,7 @@ namespace LocalPingPong
                     akka.actor.serializers.protobuf = ""LocalPingPong.Serializers.ProtobufSerializer, LocalPingPong""
                     akka.actor.serializers.msgpack = ""LocalPingPong.Serializers.MsgPackSerializer, LocalPingPong""
                     akka.actor.serializers.hyperion = ""LocalPingPong.Serializers.HyperionSerializer, LocalPingPong""
+                    akka.actor.serializers.bond = ""LocalPingPong.Serializers.BondSerializer, LocalPingPong""
                 "));
 
                 if (serializer.Equals("protobuf")) {
@@ -45,9 +46,12 @@ namespace LocalPingPong
                 else if (serializer.Equals("msgpack")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = msgpack"));
                 }
+                else if (serializer.Equals("bond")) {
+                    config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = bond"));
+                }
             }
 
-            foreach (var clientCount in clientCounts)
+            foreach (var clientCount in clientCounts.OrderBy(x => x))
             {
                 var clients = new IActorRef[clientCount];
                 var echos = new IActorRef[clientCount];

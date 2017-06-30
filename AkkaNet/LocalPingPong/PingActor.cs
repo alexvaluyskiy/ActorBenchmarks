@@ -4,8 +4,13 @@ using MessagePack;
 namespace LocalPingPong
 {
     [MessagePackObject]
+    [Bond.Schema]
     public sealed class Msg
     {
+        public Msg()
+        {
+        }
+
         [SerializationConstructor]
         public Msg(string message)
         {
@@ -13,7 +18,8 @@ namespace LocalPingPong
         }
 
         [Key(0)]
-        public string Message { get; }
+        [Bond.Id(0)]
+        public string Message { get; set; }
     }
 
     public class Start

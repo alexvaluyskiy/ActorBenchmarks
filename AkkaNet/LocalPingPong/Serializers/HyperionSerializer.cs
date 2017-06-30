@@ -17,7 +17,7 @@ namespace LocalPingPong.Serializers
             _serializer = new Hyperion.Serializer(serializerOptions);
         }
 
-        public override int Identifier => 53;
+        public override int Identifier => 52;
 
         public override bool IncludeManifest => false;
 
