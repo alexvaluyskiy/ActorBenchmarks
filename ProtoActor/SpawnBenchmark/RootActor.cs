@@ -19,16 +19,23 @@ namespace SpawnBenchmark
 
         private static readonly Stopwatch Stopwatch = Stopwatch.StartNew();
 
+        private readonly Behavior _behavior;
+
+        public RootActor()
+        {
+            _behavior = new Behavior();
+        }
+
         public Task ReceiveAsync(IContext context)
         {
             if (context.Message is Run run)
             {
                 StartRun(run.Number, context);
 
-                return Actor.Done;
+                return Task.CompletedTask;
             }
 
-            return Actor.Done;
+            return Task.CompletedTask;
         }
 
         private void StartRun(int n, IContext context)
@@ -36,8 +43,8 @@ namespace SpawnBenchmark
             Console.WriteLine($"Start run {n}");
 
             var start = Stopwatch.ElapsedMilliseconds;
-            context.Spawn(SpawnActor.Props).Tell(new SpawnActor.Start(7, 0));
-            context.SetBehavior(Waiting(n - 1, start));
+            context.Send(context.Spawn(Props.FromProducer(() => new SpawnActor())), new SpawnActor.Start(7, 0));
+            _behavior.Become(Waiting(n - 1, start));
         }
 
         private Receive Waiting(int n, long start)
@@ -50,20 +57,18 @@ namespace SpawnBenchmark
                     Console.WriteLine($"Run {n + 1} result: {x} in {diff} ms");
                     if (n == 0)
                     {
-                        return Actor.Done;
+                        return Task.CompletedTask;
                     }
                     else
                     {
                         StartRun(n, context);
                     }
 
-                    return Actor.Done;
+                    return Task.CompletedTask;
                 }
 
-                return Actor.Done;
+                return Task.CompletedTask;
             };
         }
-
-        public static Props Props { get; } = Actor.FromProducer(() => new RootActor());
     }
 }

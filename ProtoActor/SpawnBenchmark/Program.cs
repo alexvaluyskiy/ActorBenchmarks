@@ -9,9 +9,10 @@ namespace SpawnBenchmark
         static void Main(string[] args)
         {
             Console.WriteLine($"Is Server GC {GCSettings.IsServerGC}");
+            var system = new ActorSystem();
 
-            var actor = Actor.Spawn(RootActor.Props);
-            actor.Tell(new RootActor.Run(5));
+            var actor = system.Root.Spawn(Props.FromProducer(() => new RootActor()));
+            system.Root.Send(actor, new RootActor.Run(5));
             Console.ReadLine();
         }
     }

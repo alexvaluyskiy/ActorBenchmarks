@@ -27,8 +27,8 @@ namespace SpawnBenchmark
             {
                 if (start.Level == 1)
                 {
-                    context.Parent.Tell(start.Number);
-                    context.Self.Stop();
+                    context.Send(context.Parent, start.Number);
+                    context.Stop(context.Self);
                 }
                 else
                 {
@@ -36,10 +36,12 @@ namespace SpawnBenchmark
 
                     for (int i = 0; i <= 9; i++)
                     {
-                        context.Spawn(Props).Tell(new Start(start.Level - 1, startNumber + i));
+                        context.Send(
+                            context.Spawn(Props.FromProducer(() => new SpawnActor())),
+                            new Start(start.Level - 1, startNumber + i));
                     }
                 }
-                return Actor.Done;
+                return Task.CompletedTask;
             }
             else if (context.Message is long l)
             {
@@ -47,16 +49,14 @@ namespace SpawnBenchmark
                 _count += l;
                 if (_todo == 0)
                 {
-                    context.Parent.Tell(_count);
-                    //context.Self.Stop();
+                    context.Send(context.Parent, _count);
+                    //context.Stop(context.Self);
                 }
 
-                return Actor.Done;
+                return Task.CompletedTask;
             }
 
-            return Actor.Done;
+            return Task.CompletedTask;
         }
-
-        public static Props Props { get; } = Actor.FromProducer(() => new SpawnActor());
     }
 }
