@@ -15,7 +15,8 @@
     <PackageReference Include="Microsoft.Orleans.Core.Abstractions" Version="3.3.0" />
     <PackageReference Include="Microsoft.Orleans.CodeGenerator.MSBuild" Version="3.3.0" PrivateAssets="all">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-    </PackageReference>  </ItemGroup>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
