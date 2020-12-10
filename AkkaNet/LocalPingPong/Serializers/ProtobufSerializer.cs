@@ -25,6 +25,8 @@ namespace LocalPingPong.Serializers
 
         public override object FromBinary(byte[] bytes, Type type)
         {
+            type = type ?? typeof(Msg);
+
             if (type == typeof(Msg))
             {
                 return RemoteMessageFrom(bytes);

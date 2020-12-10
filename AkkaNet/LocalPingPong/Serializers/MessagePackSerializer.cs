@@ -13,12 +13,12 @@ namespace LocalPingPong.Serializers
 
         public override byte[] ToBinary(object obj)
         {
-            return MessagePackSerializer.NonGeneric.Serialize(obj.GetType(), obj);
+            return MessagePackSerializer.Serialize(obj.GetType(), obj);
         }
 
         public override object FromBinary(byte[] bytes, Type type)
         {
-            return MessagePackSerializer.NonGeneric.Deserialize(type, bytes);
+            return MessagePackSerializer.Deserialize(typeof(Msg), bytes);
         }
 
         public override int Identifier => 51;

@@ -20,7 +20,7 @@ namespace LocalPingPong
 
             const int messageCount = 1000000;
             const int batchSize = 100;
-            var clientCounts = new HashSet<int>() {1, 2, 4, Environment.ProcessorCount};
+            var clientCounts = new HashSet<int>() {1, 2, 4, 8, 12};
 
             Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
 
@@ -39,9 +39,6 @@ namespace LocalPingPong
 
                 if (serializer.Equals("protobuf")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = protobuf"));
-                }
-                else if (serializer.Equals("hyperion")) {
-                    config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = hyperion"));
                 }
                 else if (serializer.Equals("msgpack")) {
                     config = config.WithFallback(ConfigurationFactory.ParseString(@"akka.actor.serialization-bindings.""LocalPingPong.Msg, LocalPingPong"" = msgpack"));

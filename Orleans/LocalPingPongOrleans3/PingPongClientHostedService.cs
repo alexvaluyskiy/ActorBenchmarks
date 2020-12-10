@@ -21,7 +21,7 @@ namespace LocalPingPongOrleans3
         {
             const int messageCount = 1000000;
             const int batchSize = 100;
-            int[] clientCounts = new int[] { 1, 2, 4, 8 };
+            int[] clientCounts = new int[] { 1, 2, 4, 8, 12 };
 
             Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
 
