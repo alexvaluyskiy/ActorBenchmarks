@@ -13,9 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Orleans.Client" Version="1.4.0" />
-    <PackageReference Include="Microsoft.Orleans.Core" Version="1.4.0" />
-    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="1.4.0" />
-    <PackageReference Include="Microsoft.Orleans.Server" Version="1.4.0" />
+    <PackageReference Include="Microsoft.Orleans.Client" Version="1.5.10" />
+    <PackageReference Include="Microsoft.Orleans.Core" Version="1.5.10" />
+    <PackageReference Include="Microsoft.Orleans.OrleansCodeGenerator.Build" Version="1.5.10" />
+    <PackageReference Include="Microsoft.Orleans.Server" Version="1.5.10" />
   </ItemGroup>
 </Project>

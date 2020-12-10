@@ -1,7 +1,6 @@
 ﻿using Orleans;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using System.Diagnostics;
 
 namespace LocalPingPong
 {
@@ -22,7 +21,7 @@ namespace LocalPingPong
         private int _batchSize;
         private int _batch;
         private IPongGrain _pongGrain;
-        private ObserverSubscriptionManager<IBenchmarkObserver> subscribers = new ObserverSubscriptionManager<IBenchmarkObserver>();
+        private IBenchmarkObserver _benchmarkObserver;
 
         public Task Init(IPongGrain pongGrain, int messageCount, int batchSize)
         {
@@ -51,7 +50,7 @@ namespace LocalPingPong
 
             if (!SendBatch(pongGrain))
             {
-                subscribers.Notify(s => s.BenchmarkFinished());
+                _benchmarkObserver.BenchmarkFinished();
             }
 
             return Task.CompletedTask;
@@ -59,7 +58,7 @@ namespace LocalPingPong
 
         public Task Subscribe(IBenchmarkObserver observer)
         {
-            subscribers.Subscribe(observer);
+            _benchmarkObserver = observer;
 
             return Task.CompletedTask;
         }
