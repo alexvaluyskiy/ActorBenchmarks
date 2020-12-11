@@ -2,17 +2,13 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net462;netcoreapp1.1</TargetFrameworks>
+    <TargetFrameworks>net5.0</TargetFrameworks>
     <ServerGarbageCollection>true</ServerGarbageCollection>
     <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="App.config" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Proto.Actor" Version="0.1.2" />
+    <PackageReference Include="Proto.Actor" Version="0.11.0" />
   </ItemGroup>
 
 </Project>

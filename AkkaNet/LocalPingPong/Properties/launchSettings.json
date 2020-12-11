@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LocalPingPong": {
+      "commandName": "Project",
+      "commandLineArgs": "--serializer=msgpack"
+    }
+  }
+}

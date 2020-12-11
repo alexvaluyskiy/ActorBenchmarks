@@ -54,11 +54,11 @@ namespace LocalPingPong
 
                     if (!SendBatch(context, m.Sender))
                     {
-                        _replyTo.Tell(true);
+                        context.Send(_replyTo, true);
                     }
                     break;
             }
-            return Actor.Done;
+            return Task.CompletedTask;
         }
 
         private bool SendBatch(IContext context, PID sender)
@@ -72,14 +72,12 @@ namespace LocalPingPong
 
             for (var i = 0; i < _batchSize; i++)
             {
-                sender.Tell(m);
+                context.Send(sender, m);
             }
 
             _messageCount -= _batchSize;
             _batch = _batchSize;
             return true;
         }
-
-        public static Props Props(int messageCount, int batchSize) => Actor.FromProducer(() => new PingActor(messageCount, batchSize));
     }
 }

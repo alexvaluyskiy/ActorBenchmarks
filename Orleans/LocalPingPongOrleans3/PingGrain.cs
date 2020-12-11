@@ -1,13 +1,11 @@
 ﻿using Orleans;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
-using System.Diagnostics;
 
 namespace LocalPingPong
 {
     public interface IPingGrain : IGrainWithIntegerKey
     {
-        
         Task Init(IPongGrain pongGrain, int messageCount, int batchSize);
 
         Task Start();
@@ -23,7 +21,7 @@ namespace LocalPingPong
         private int _batchSize;
         private int _batch;
         private IPongGrain _pongGrain;
-        private ObserverSubscriptionManager<IBenchmarkObserver> subscribers = new ObserverSubscriptionManager<IBenchmarkObserver>();
+        private IBenchmarkObserver _benchmarkObserver;
 
         public Task Init(IPongGrain pongGrain, int messageCount, int batchSize)
         {
@@ -31,14 +29,14 @@ namespace LocalPingPong
             _batchSize = batchSize;
             _pongGrain = pongGrain;
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public Task Start()
         {
             SendBatch(_pongGrain);
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public Task Pong(IPongGrain pongGrain, Message message)
@@ -47,22 +45,22 @@ namespace LocalPingPong
 
             if (_batch > 0)
             {
-                return TaskDone.Done;
+                return Task.CompletedTask;
             }
 
             if (!SendBatch(pongGrain))
             {
-                subscribers.Notify(s => s.BenchmarkFinished());
+                _benchmarkObserver.BenchmarkFinished();
             }
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         public Task Subscribe(IBenchmarkObserver observer)
         {
-            subscribers.Subscribe(observer);
+            _benchmarkObserver = observer;
 
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
 
         private bool SendBatch(IPongGrain pongGrain)

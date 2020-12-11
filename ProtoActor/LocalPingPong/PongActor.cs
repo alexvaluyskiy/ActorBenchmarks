@@ -10,13 +10,11 @@ namespace LocalPingPong
             switch (context.Message)
             {
                 case PingActor.Msg msg:
-                    msg.Sender.Tell(msg);
+                    context.Send(msg.Sender, msg);
                     break;
             }
 
-            return Actor.Done;
+            return Task.CompletedTask;
         }
-
-        public static Props Props => Actor.FromProducer(() => new PongActor());
     }
 }

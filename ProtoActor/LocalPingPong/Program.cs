@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,6 +17,8 @@ namespace LocalPingPong
             const int batchSize = 100;
             int[] clientCounts = new int[] { 1, 2, 4, 8, 16 };
 
+            var system = new ActorSystem();
+
             Console.WriteLine("Clients\t\tElapsed\t\tMsg/sec");
 
             foreach (var clientCount in clientCounts)
@@ -27,8 +28,8 @@ namespace LocalPingPong
 
                 for (var i = 0; i < clientCount; i++)
                 {
-                    clients[i] = Actor.Spawn(PingActor.Props(messageCount, batchSize));
-                    echos[i] = Actor.Spawn(PongActor.Props);
+                    clients[i] = system.Root.Spawn(Props.FromProducer(() => new PingActor(messageCount, batchSize)));
+                    echos[i] = system.Root.Spawn(Props.FromProducer(() => new PongActor()));
                 }
 
                 var tasks = new Task[clientCount];
@@ -38,7 +39,7 @@ namespace LocalPingPong
                     var client = clients[i];
                     var echo = echos[i];
 
-                    tasks[i] = client.RequestAsync<bool>(new PingActor.Start(echo));
+                    tasks[i] = system.Root.RequestAsync<bool>(client, new PingActor.Start(echo));
                 }
                 Task.WaitAll(tasks);
                 sw.Stop();

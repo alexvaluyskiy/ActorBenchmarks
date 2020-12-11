@@ -3,14 +3,16 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Orleans.Configuration;
 using Orleans.Hosting;
 using System;
 using System.Runtime;
+using LocalPingPongOrleans3;
 using Microsoft.Extensions.Configuration;
 using System.IO;
 
-namespace SpawnBenchmark
+namespace LocalPingPong
 {
     class Program
     {
@@ -36,7 +38,7 @@ namespace SpawnBenchmark
                 })
                 .ConfigureServices(services =>
                 {
-                    services.AddHostedService<SpawnClientHostedService>();
+                    services.AddHostedService<PingPongClientHostedService>();
 
                     services.Configure<ConsoleLifetimeOptions>(options =>
                     {

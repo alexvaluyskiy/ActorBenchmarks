@@ -1,8 +1,4 @@
 ﻿using Orleans;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LocalPingPong
@@ -17,7 +13,7 @@ namespace LocalPingPong
         public Task Ping(IPingGrain pingGrain, Message message)
         {
             pingGrain.Pong(this, message).Ignore();
-            return TaskDone.Done;
+            return Task.CompletedTask;
         }
     }
 }

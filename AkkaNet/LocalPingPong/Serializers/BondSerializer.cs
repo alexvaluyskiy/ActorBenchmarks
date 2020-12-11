@@ -39,6 +39,7 @@ namespace LocalPingPong.Serializers
 
         public override object FromBinary(byte[] bytes, Type type)
         {
+            type = type ?? typeof(Msg);
             if (type == null) throw new InvalidOperationException($"{GetType()}.FromBinary requires type to be provided");
 
             var deserializer = deserializerCache.GetOrAdd(type, t => new Deserializer<FastBinaryReader<InputBuffer>>(t));
